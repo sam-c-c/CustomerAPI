@@ -57,10 +57,14 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="StoredProcedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Customer.sql" />
     <Build Include="Tables\Address.sql" />
+    <Build Include="StoredProcedures\DoesCustomerAlreadyExist.sql" />
+    <Build Include="StoredProcedures\InsertCustomer.sql" />
+    <Build Include="StoredProcedures\InsertAddress.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="local.publish.publish.xml" />

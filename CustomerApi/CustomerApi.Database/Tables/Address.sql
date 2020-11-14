@@ -7,7 +7,7 @@
 ,	[Town] VARCHAR(50) NOT NULL
 ,	[County] VARCHAR(50) NULL
 ,	[Postcode] VARCHAR(10) NOT NULL
-,	[Country] VARCHAR(10) NULL DEFAULT('UK')
+,	[Country] VARCHAR(10) NOT NULL
 ,	[IsMainAddress] BIT NOT NULL 
 
 ,	CONSTRAINT PK_Address PRIMARY KEY(Id)
