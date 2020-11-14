@@ -47,10 +47,19 @@ namespace CustomerApi.Controllers
             }
         }
 
-        [HttpPost("api/DeleteCustomer")]
-        public IActionResult DeleteCustomer()
+        [HttpPost("api/DeleteCustomer/{customerId}")]
+        public IActionResult DeleteCustomer(int customerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                customerDataProvider.DeleteCustomer(customerId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("api/GetAllCustomers")]
@@ -77,10 +86,19 @@ namespace CustomerApi.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost("api/SetCustomerStatus")]
-        public IActionResult SetCustomerStatus()
+        [HttpPost("api/UpdateCustomerIsActiveFlag/{customerId}/{isActive}")]
+        public IActionResult UpdateCustomerIsActiveFlag(int customerId, bool isActive)
         {
-            throw new NotImplementedException();
+            try
+            {
+                customerDataProvider.UpdateCustomerIsActiveFlag(customerId, isActive);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
     }
 }

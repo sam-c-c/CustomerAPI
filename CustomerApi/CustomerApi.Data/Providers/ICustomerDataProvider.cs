@@ -7,5 +7,9 @@ namespace CustomerApi.Data.Providers
         bool DoesCustomerAlreadyExist(Customer customer);
 
         int AddCustomer(Customer customer);
+
+        void DeleteCustomer(int customerId);
+
+        void UpdateCustomerIsActiveFlag(int customerId, bool isActive);
     }
 }

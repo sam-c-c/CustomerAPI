@@ -1,11 +1,8 @@
 ﻿using CustomerApi.Data.Entities;
 using Dapper;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 
 namespace CustomerApi.Data.Providers
 {
@@ -51,6 +48,19 @@ namespace CustomerApi.Data.Providers
             }
         }
 
+        public void DeleteCustomer(int customerId)
+        {
+            var deleteCustomerStoredProcedure = "DeleteCustomer";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Execute(deleteCustomerStoredProcedure, new
+                {
+                    customerId,
+                }, commandType: System.Data.CommandType.StoredProcedure);
+            }
+        }
+
         public bool DoesCustomerAlreadyExist(Customer customer)
         {
             var storedProcedure = "DoesCustomerAlreadyExist";
@@ -64,6 +74,20 @@ namespace CustomerApi.Data.Providers
                     emailAddress = customer.EmailAddress 
                 }, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
                 return result > 0;
+            }
+        }
+
+        public void UpdateCustomerIsActiveFlag(int customerId, bool isActive)
+        {
+            var updateCustomerIsActiveFlagStoredProcedure = "UpdateCustomerIsActiveFlag";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Execute(updateCustomerIsActiveFlagStoredProcedure, new
+                {
+                    customerId,
+                    isActive
+                }, commandType: System.Data.CommandType.StoredProcedure);
             }
         }
     }

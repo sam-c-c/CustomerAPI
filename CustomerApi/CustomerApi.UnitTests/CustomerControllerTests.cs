@@ -110,5 +110,59 @@ namespace CustomerApi.UnitTests
             message.Should().NotBe(0);
             message.Should().Be(202);
         }
+
+        [TestMethod]
+        public void DeleteCustomer_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.DeleteCustomer(It.IsAny<int>())).Throws(new Exception());
+
+            // Act
+            var result = controller.DeleteCustomer(1000) as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void DeleteCustomer_DeleteIsSuccesful_Returns200Response()
+        {
+            // Arrange
+
+            // Act
+            var result = controller.DeleteCustomer(1000) as OkResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+        }
+
+        [TestMethod]
+        public void SetCustomerStatus_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.UpdateCustomerIsActiveFlag(It.IsAny<int>(), It.IsAny<bool>())).Throws(new Exception());
+
+            // Act
+            var result = controller.UpdateCustomerIsActiveFlag(1000, true) as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void SetCustomerStatus_UpdateIsSuccesful_Returns200Response()
+        {
+            // Arrange
+
+            // Act
+            var result = controller.UpdateCustomerIsActiveFlag(1000, true) as OkResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+        }
     }
 }
