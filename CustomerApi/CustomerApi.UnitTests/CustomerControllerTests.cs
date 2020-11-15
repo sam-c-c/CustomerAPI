@@ -1,6 +1,7 @@
 using CustomerApi.Controllers;
 using CustomerApi.Data.Entities;
 using CustomerApi.Data.Providers;
+using CustomerApi.Logging;
 using CustomerApi.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +16,15 @@ namespace CustomerApi.UnitTests
     public class CustomerControllerTests
     {
         private Mock<ICustomerDataProvider> mockCustomerDataProvider;
+        private Mock<ILogger> mockLogger;
         private CustomerController controller;
 
         [TestInitialize]
         public void BeforeEachTest()
         {
             mockCustomerDataProvider = new Mock<ICustomerDataProvider>();
-            controller = new CustomerController(mockCustomerDataProvider.Object);
+            mockLogger = new Mock<ILogger>();
+            controller = new CustomerController(mockCustomerDataProvider.Object, mockLogger.Object);
         }
 
         [TestMethod]

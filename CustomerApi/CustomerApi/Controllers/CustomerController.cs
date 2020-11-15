@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CustomerApi.Data.Providers;
+using CustomerApi.Logging;
 using CustomerApi.Mappers;
 using CustomerApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace CustomerApi.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerDataProvider customerDataProvider;
+        private readonly ILogger logger;
 
-        public CustomerController(ICustomerDataProvider customerDataProvider)
+        public CustomerController(ICustomerDataProvider customerDataProvider, ILogger logger)
         {
             this.customerDataProvider = customerDataProvider;
+            this.logger = logger;
         }
 
         [HttpPost("api/AddCustomer")]
@@ -42,12 +45,12 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
 
-        [HttpPost("api/DeleteCustomer/{customerId}")]
+        [HttpDelete("api/DeleteCustomer/{customerId}")]
         public IActionResult DeleteCustomer(int customerId)
         {
             try
@@ -57,7 +60,7 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
@@ -72,7 +75,7 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
@@ -88,7 +91,7 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
@@ -104,7 +107,7 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
@@ -124,12 +127,12 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }
 
-        [HttpPost("api/UpdateCustomerIsActiveFlag/{customerId}/{isActive}")]
+        [HttpPut("api/UpdateCustomerIsActiveFlag/{customerId}/{isActive}")]
         public IActionResult UpdateCustomerIsActiveFlag(int customerId, bool isActive)
         {
             try
@@ -139,7 +142,7 @@ namespace CustomerApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: Log the exception
+                logger.LogError(ex.ToString());
                 return StatusCode(500);
             }
         }

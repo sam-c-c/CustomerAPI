@@ -1,4 +1,5 @@
 using CustomerApi.Data.Providers;
+using CustomerApi.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +53,7 @@ namespace CustomerApi
 
             // Providers
             services.AddScoped<ICustomerDataProvider, SqlCustomerDataProvider>();
+            services.AddTransient<ILogger, DummyLogger>();
         }
     }
 }

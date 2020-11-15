@@ -24,24 +24,37 @@ namespace CustomerApi.Data.Providers
 
             using (var conn = new SqlConnection(connectionString))
             {
-                if (address.IsMainAddress)
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
                 {
-                    conn.Execute(updateAddressIsMainAddressFlagToFalseForCustomer, 
-                        new { customerId = address.CustomerId }, commandType: CommandType.StoredProcedure);
-                }
+                    try
+                    {
+                        if (address.IsMainAddress)
+                        {
+                            conn.Execute(updateAddressIsMainAddressFlagToFalseForCustomer,
+                                new { customerId = address.CustomerId }, transaction, commandType: CommandType.StoredProcedure);
+                        }
 
-                var addressId = conn.ExecuteScalar<int>(insertAddressStoredProcedure, new
-                {
-                    customerId = address.CustomerId,
-                    addressLine1 = address.AddressLine1,
-                    addressLine2 = address.AddressLine2,
-                    town = address.Town,
-                    county = address.County,
-                    postcode = address.Postcode,
-                    country = address.Country,
-                    isMainAddress = address.IsMainAddress
-                }, commandType: CommandType.StoredProcedure);
-                return addressId;
+                        var addressId = conn.ExecuteScalar<int>(insertAddressStoredProcedure, new
+                        {
+                            customerId = address.CustomerId,
+                            addressLine1 = address.AddressLine1,
+                            addressLine2 = address.AddressLine2,
+                            town = address.Town,
+                            county = address.County,
+                            postcode = address.Postcode,
+                            country = address.Country,
+                            isMainAddress = address.IsMainAddress
+                        }, transaction, commandType: CommandType.StoredProcedure);
+                        transaction.Commit();
+                        return addressId;
+                    }
+                    catch (SqlException)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
@@ -52,29 +65,42 @@ namespace CustomerApi.Data.Providers
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var customerId = conn.ExecuteScalar<int>(insertCustomerStoredProcedure, new
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
                 {
-                    title = customer.Title,
-                    forename = customer.Forename,
-                    surname = customer.Surname,
-                    emailAddress = customer.EmailAddress,
-                    mobileNo = customer.MobileNo
-                }, commandType: CommandType.StoredProcedure);
-                foreach (var address in customer.Addresses)
-                {
-                    conn.Execute(insertAddressStoredProcedure, new
+                    try
                     {
-                        customerId,
-                        addressLine1 = address.AddressLine1,
-                        addressLine2 = address.AddressLine2,
-                        town = address.Town,
-                        county = address.County,
-                        postcode = address.Postcode,
-                        country = address.Country,
-                        isMainAddress = address.IsMainAddress
-                    }, commandType: CommandType.StoredProcedure);
+                        var customerId = conn.ExecuteScalar<int>(insertCustomerStoredProcedure, new
+                        {
+                            title = customer.Title,
+                            forename = customer.Forename,
+                            surname = customer.Surname,
+                            emailAddress = customer.EmailAddress,
+                            mobileNo = customer.MobileNo
+                        }, transaction, commandType: CommandType.StoredProcedure);
+                        foreach (var address in customer.Addresses)
+                        {
+                            conn.Execute(insertAddressStoredProcedure, new
+                            {
+                                customerId,
+                                addressLine1 = address.AddressLine1,
+                                addressLine2 = address.AddressLine2,
+                                town = address.Town,
+                                county = address.County,
+                                postcode = address.Postcode,
+                                country = address.Country,
+                                isMainAddress = address.IsMainAddress
+                            }, transaction, commandType: CommandType.StoredProcedure);
+                        }
+                        transaction.Commit();
+                        return customerId;
+                    }
+                    catch (SqlException)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
-                return customerId;
             }
         }
 
