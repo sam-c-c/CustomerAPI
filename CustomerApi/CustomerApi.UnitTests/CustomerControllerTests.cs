@@ -164,5 +164,72 @@ namespace CustomerApi.UnitTests
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
         }
+
+        [TestMethod]
+        public void GetAllCustomers_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.GetAllCustomers()).Throws(new Exception());
+
+            // Act
+            var result = controller.GetAllCustomers() as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void GetAllCustomers_UpdateIsSuccesful_Returns200ResponseWithData()
+        {
+            // Arrange
+            var customer = new Customer();
+            var customers = new List<Customer>() { customer, customer };
+            mockCustomerDataProvider.Setup(x => x.GetAllCustomers()).Returns(customers);
+
+            // Act
+            var result = controller.GetAllCustomers() as OkObjectResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+            var data = result.Value as List<Customer>;
+            data.Should().NotBeNull();
+            data.Count.Should().Be(2);
+        }
+
+        [TestMethod]
+        public void GetActiveCustomers_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.GetAllCustomers()).Throws(new Exception());
+
+            // Act
+            var result = controller.GetActiveCustomers() as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void GetActiveCustomers_UpdateIsSuccesful_Returns200ResponseWithData()
+        {
+            // Arrange
+            var activeCustomer = new Customer() { IsActive = true };
+            var notActiveCustomer = new Customer();
+            var customers = new List<Customer>() { activeCustomer, notActiveCustomer };
+            mockCustomerDataProvider.Setup(x => x.GetAllCustomers()).Returns(customers);
+
+            // Act
+            var result = controller.GetActiveCustomers() as OkObjectResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+            var data = result.Value as List<Customer>;
+            data.Should().NotBeNull();
+            data.Count.Should().Be(1);
+        }
     }
 }

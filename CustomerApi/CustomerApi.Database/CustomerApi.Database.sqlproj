@@ -67,6 +67,8 @@
     <Build Include="StoredProcedures\InsertAddress.sql" />
     <Build Include="StoredProcedures\DeleteCustomer.sql" />
     <Build Include="StoredProcedures\UpdateCustomerIsActiveFlag.sql" />
+    <Build Include="StoredProcedures\GetAllCustomers.sql" />
+    <Build Include="StoredProcedures\GetAllAddressesForCustomer.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="local.publish.xml" />

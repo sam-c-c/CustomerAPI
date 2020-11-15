@@ -1,6 +1,7 @@
 ﻿using CustomerApi.Data.Entities;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -74,6 +75,26 @@ namespace CustomerApi.Data.Providers
                     emailAddress = customer.EmailAddress 
                 }, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
                 return result > 0;
+            }
+        }
+
+        public List<Customer> GetAllCustomers()
+        {
+            var allCustomersStoredProcedure = "GetAllCustomers";
+            var getCustomerAddressesStoredProcedure = "GetAllAddressesForCustomer";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var customers = conn.Query<Customer>(allCustomersStoredProcedure, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                if (customers != null && customers.Any())
+                {
+                    foreach (var customer in customers)
+                    {
+                        customer.Addresses = conn.Query<Address>(getCustomerAddressesStoredProcedure, 
+                            new { customerId = customer.Id }, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                    }
+                }
+                return customers;
             }
         }
 

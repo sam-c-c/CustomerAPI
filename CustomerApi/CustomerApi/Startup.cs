@@ -50,9 +50,6 @@ namespace CustomerApi
 
             services.AddOptions();
 
-            // Settings
-            //services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
-
             // Providers
             services.AddScoped<ICustomerDataProvider, SqlCustomerDataProvider>();
         }

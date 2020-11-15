@@ -62,16 +62,35 @@ namespace CustomerApi.Controllers
             }
         }
 
-        [HttpPost("api/GetAllCustomers")]
+        [HttpGet("api/GetAllCustomers")]
         public IActionResult GetAllCustomers()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var customers = customerDataProvider.GetAllCustomers();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
 
-        [HttpPost("api/GetActiveCustomers")]
+        [HttpGet("api/GetActiveCustomers")]
         public IActionResult GetActiveCustomers()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var customers = customerDataProvider.GetAllCustomers();
+                var activeCustomers = customers.Where(x => x.IsActive == true).ToList();
+                return Ok(activeCustomers);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("api/AddAddress")]
