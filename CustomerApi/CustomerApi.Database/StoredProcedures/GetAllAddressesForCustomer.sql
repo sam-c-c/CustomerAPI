@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[GetAllAddressesForCustomer]
-	@customerId int
+	@customerId INT
 AS
 	SELECT 
 		Id

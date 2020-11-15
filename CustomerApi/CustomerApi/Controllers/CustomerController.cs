@@ -109,10 +109,24 @@ namespace CustomerApi.Controllers
             }
         }
 
-        [HttpPost("api/DeleteAddress")]
-        public IActionResult DeleteAddress()
+        [HttpDelete("api/DeleteAddress/{customerId}/{addressId}")]
+        public IActionResult DeleteAddress(int customerId, int addressId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var customer = customerDataProvider.GetCustomer(customerId);
+                if (customer == null || customer == default || customer.Addresses.Count == 1)
+                {
+                    return BadRequest("Customer only has one address");
+                }
+                customerDataProvider.DeleteAddress(customerId, addressId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("api/UpdateCustomerIsActiveFlag/{customerId}/{isActive}")]

@@ -15,6 +15,10 @@ namespace CustomerApi.Data.Providers
 
         List<Customer> GetAllCustomers();
 
+        Customer GetCustomer(int customerId);
+
         int AddAddress(Address address);
+
+        void DeleteAddress(int customerId, int addressId);
     }
 }

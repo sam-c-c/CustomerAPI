@@ -78,6 +78,20 @@ namespace CustomerApi.Data.Providers
             }
         }
 
+        public void DeleteAddress(int customerId, int addressId)
+        {
+            var deleteAddressStoredProcedure = "DeleteAddress";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                conn.Execute(deleteAddressStoredProcedure, new
+                {
+                    customerId,
+                    addressId
+                }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
         public void DeleteCustomer(int customerId)
         {
             var deleteCustomerStoredProcedure = "DeleteCustomer";
@@ -124,6 +138,24 @@ namespace CustomerApi.Data.Providers
                     }
                 }
                 return customers;
+            }
+        }
+
+        public Customer GetCustomer(int customerId)
+        {
+            var getCustomerByIdStoredProcedure = "GetCustomerById";
+            var getCustomerAddressesStoredProcedure = "GetAllAddressesForCustomer";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var customer = conn.Query<Customer>(getCustomerByIdStoredProcedure,
+                    new { customerId }, commandType: CommandType.StoredProcedure).FirstOrDefault();
+                if (customer != null && customer != default)
+                {
+                    customer.Addresses = conn.Query<Address>(getCustomerAddressesStoredProcedure,
+                            new { customerId = customer.Id }, commandType: CommandType.StoredProcedure).ToList();
+                }
+                return customer;
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[UpdateAddressIsMainAddressFlagToFalseForCustomer]
-	@customerId int
+	@customerId INT
 AS
 	UPDATE dbo.[Address]
 	SET IsMainAddress = 0

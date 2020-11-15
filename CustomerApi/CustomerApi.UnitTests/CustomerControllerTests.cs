@@ -261,5 +261,53 @@ namespace CustomerApi.UnitTests
             var data = (int)result.Value;
             data.Should().Be(301);
         }
+
+        [TestMethod]
+        public void DeleteAddress_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.GetCustomer(It.IsAny<int>())).Throws(new Exception());
+
+            // Act
+            var result = controller.DeleteAddress(202, 301) as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void DeleteAddress_CustomerOnlyHasOneAddress_Returns400Response()
+        {
+            // Arrange
+            var customer = new Customer() { Addresses = new List<Address>() { new Address() } };
+            mockCustomerDataProvider.Setup(x => x.GetCustomer(It.IsAny<int>())).Returns(customer);
+
+            // Act
+            var result = controller.DeleteAddress(202, 301) as BadRequestObjectResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(400);
+            var data = result.Value as string;
+            data.Should().NotBeNullOrEmpty();
+            data.Should().Contain("Customer only has one address");
+        }
+
+        [TestMethod]
+        public void DeleteAddress_RequestIsSuccesful_Returns200Response()
+        {
+            // Arrange
+            var customer = new Customer() { Addresses = new List<Address>() { new Address(), new Address() } };
+            mockCustomerDataProvider.Setup(x => x.GetCustomer(It.IsAny<int>())).Returns(customer);
+
+            // Act
+            var result = controller.DeleteAddress(202, 301) as OkResult;
+
+            // Assert
+            mockCustomerDataProvider.Verify(x => x.DeleteAddress(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+        }
     }
 }

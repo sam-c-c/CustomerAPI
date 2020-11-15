@@ -70,6 +70,8 @@
     <Build Include="StoredProcedures\GetAllCustomers.sql" />
     <Build Include="StoredProcedures\GetAllAddressesForCustomer.sql" />
     <Build Include="StoredProcedures\UpdateAddressIsMainAddressFlagToFalseForCustomer.sql" />
+    <Build Include="StoredProcedures\DeleteAddress.sql" />
+    <Build Include="StoredProcedures\GetCustomerById.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="local.publish.xml" />
