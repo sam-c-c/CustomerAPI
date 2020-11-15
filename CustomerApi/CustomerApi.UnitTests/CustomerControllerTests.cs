@@ -180,7 +180,7 @@ namespace CustomerApi.UnitTests
         }
 
         [TestMethod]
-        public void GetAllCustomers_UpdateIsSuccesful_Returns200ResponseWithData()
+        public void GetAllCustomers_RequestIsSuccesful_Returns200ResponseWithData()
         {
             // Arrange
             var customer = new Customer();
@@ -213,7 +213,7 @@ namespace CustomerApi.UnitTests
         }
 
         [TestMethod]
-        public void GetActiveCustomers_UpdateIsSuccesful_Returns200ResponseWithData()
+        public void GetActiveCustomers_RequestIsSuccesful_Returns200ResponseWithData()
         {
             // Arrange
             var activeCustomer = new Customer() { IsActive = true };
@@ -230,6 +230,36 @@ namespace CustomerApi.UnitTests
             var data = result.Value as List<Customer>;
             data.Should().NotBeNull();
             data.Count.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void AddAddress_DataProviderThrowsException_Returns500Response()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.AddAddress(It.IsAny<Address>())).Throws(new Exception());
+
+            // Act
+            var result = controller.AddAddress(202, new AddressModel()) as StatusCodeResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(500);
+        }
+
+        [TestMethod]
+        public void GetActiveCustomers_RequestIsSuccesful_Returns200ResponseWithNewAddressId()
+        {
+            // Arrange
+            mockCustomerDataProvider.Setup(x => x.AddAddress(It.IsAny<Address>())).Returns(301);
+
+            // Act
+            var result = controller.AddAddress(202, new AddressModel()) as OkObjectResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+            var data = (int)result.Value;
+            data.Should().Be(301);
         }
     }
 }

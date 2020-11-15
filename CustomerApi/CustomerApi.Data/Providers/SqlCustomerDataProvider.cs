@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 
@@ -14,6 +15,34 @@ namespace CustomerApi.Data.Providers
         public SqlCustomerDataProvider(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("CustomerApiDb");
+        }
+
+        public int AddAddress(Address address)
+        {
+            var insertAddressStoredProcedure = "InsertAddress";
+            var updateAddressIsMainAddressFlagToFalseForCustomer = "UpdateAddressIsMainAddressFlagToFalseForCustomer";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                if (address.IsMainAddress)
+                {
+                    conn.Execute(updateAddressIsMainAddressFlagToFalseForCustomer, 
+                        new { customerId = address.CustomerId }, commandType: CommandType.StoredProcedure);
+                }
+
+                var addressId = conn.ExecuteScalar<int>(insertAddressStoredProcedure, new
+                {
+                    customerId = address.CustomerId,
+                    addressLine1 = address.AddressLine1,
+                    addressLine2 = address.AddressLine2,
+                    town = address.Town,
+                    county = address.County,
+                    postcode = address.Postcode,
+                    country = address.Country,
+                    isMainAddress = address.IsMainAddress
+                }, commandType: CommandType.StoredProcedure);
+                return addressId;
+            }
         }
 
         public int AddCustomer(Customer customer)
@@ -30,7 +59,7 @@ namespace CustomerApi.Data.Providers
                     surname = customer.Surname,
                     emailAddress = customer.EmailAddress,
                     mobileNo = customer.MobileNo
-                }, commandType: System.Data.CommandType.StoredProcedure);
+                }, commandType: CommandType.StoredProcedure);
                 foreach (var address in customer.Addresses)
                 {
                     conn.Execute(insertAddressStoredProcedure, new
@@ -43,7 +72,7 @@ namespace CustomerApi.Data.Providers
                         postcode = address.Postcode,
                         country = address.Country,
                         isMainAddress = address.IsMainAddress
-                    }, commandType: System.Data.CommandType.StoredProcedure);
+                    }, commandType: CommandType.StoredProcedure);
                 }
                 return customerId;
             }
@@ -58,7 +87,7 @@ namespace CustomerApi.Data.Providers
                 conn.Execute(deleteCustomerStoredProcedure, new
                 {
                     customerId,
-                }, commandType: System.Data.CommandType.StoredProcedure);
+                }, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -73,7 +102,7 @@ namespace CustomerApi.Data.Providers
                     forename = customer.Forename, 
                     surname = customer.Surname, 
                     emailAddress = customer.EmailAddress 
-                }, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+                }, commandType: CommandType.StoredProcedure).FirstOrDefault();
                 return result > 0;
             }
         }
@@ -85,13 +114,13 @@ namespace CustomerApi.Data.Providers
 
             using (var conn = new SqlConnection(connectionString))
             {
-                var customers = conn.Query<Customer>(allCustomersStoredProcedure, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                var customers = conn.Query<Customer>(allCustomersStoredProcedure, commandType: CommandType.StoredProcedure).ToList();
                 if (customers != null && customers.Any())
                 {
                     foreach (var customer in customers)
                     {
                         customer.Addresses = conn.Query<Address>(getCustomerAddressesStoredProcedure, 
-                            new { customerId = customer.Id }, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                            new { customerId = customer.Id }, commandType: CommandType.StoredProcedure).ToList();
                     }
                 }
                 return customers;
@@ -108,7 +137,7 @@ namespace CustomerApi.Data.Providers
                 {
                     customerId,
                     isActive
-                }, commandType: System.Data.CommandType.StoredProcedure);
+                }, commandType: CommandType.StoredProcedure);
             }
         }
     }

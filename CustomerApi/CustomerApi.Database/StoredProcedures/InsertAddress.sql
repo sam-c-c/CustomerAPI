@@ -10,4 +10,6 @@
 AS
 	INSERT INTO dbo.Address(CustomerId, AddressLine1, AddressLine2, Town, County, Postcode, Country, IsMainAddress)
 	VALUES (@customerId, @addressLine1, @addressLine2, @town, @county, @postcode, ISNULL(@country, 'UK'), @isMainAddress)
+
+	SELECT @@IDENTITY
 GO

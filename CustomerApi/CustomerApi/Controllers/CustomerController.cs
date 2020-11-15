@@ -93,10 +93,20 @@ namespace CustomerApi.Controllers
             }
         }
 
-        [HttpPost("api/AddAddress")]
-        public IActionResult AddAddress()
+        [HttpPost("api/AddAddress/{customerId}")]
+        public IActionResult AddAddress(int customerId, [FromBody] AddressModel addressModel)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var address = AddressModelToAddressEntityMapper.Map(customerId, addressModel);
+                var addressId = customerDataProvider.AddAddress(address);
+                return Ok(addressId);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the exception
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("api/DeleteAddress")]

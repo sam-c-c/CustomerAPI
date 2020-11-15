@@ -14,5 +14,7 @@ namespace CustomerApi.Data.Providers
         void UpdateCustomerIsActiveFlag(int customerId, bool isActive);
 
         List<Customer> GetAllCustomers();
+
+        int AddAddress(Address address);
     }
 }
